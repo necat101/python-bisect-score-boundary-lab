@@ -123,6 +123,73 @@ class BisectScoreBoundaryLabTest(unittest.TestCase):
         ]
         self.assertEqual(keys, expected)
 
+    # -----------------------------------------------------------------------
+    # Inspect-input corruption tests
+    # -----------------------------------------------------------------------
+
+    def test_inspect_left_scores_unsorted_fails(self):
+        """corrupt left-case scores: unsorted list is rejected"""
+        from run_lab import check_scores_sorted_nondecreasing
+        bad = [0.5, 0.1, 0.3]
+        self.assertFalse(check_scores_sorted_nondecreasing(bad))
+
+    def test_inspect_left_wrong_search_value_fails(self):
+        """corrupt left-case search value: non-0.5 threshold is rejected"""
+        search_value = 0.9
+        search_is_05 = (search_value == 0.5)
+        self.assertFalse(search_is_05)
+
+    def test_inspect_left_no_duplicate_block_fails(self):
+        """corrupt left-case scores: no duplicate block is rejected"""
+        from run_lab import check_duplicate_block
+        no_dup = [0.1, 0.3, 0.5, 0.7, 0.9]
+        self.assertFalse(check_duplicate_block(no_dup, 0.5))
+
+    def test_inspect_keyed_records_unsorted_fails(self):
+        """corrupt keyed-search records: unsorted by score is rejected"""
+        from run_lab import check_records_nondecreasing_by_score
+        bad = [{"score": 0.7, "name": "x"}, {"score": 0.1, "name": "y"}]
+        self.assertFalse(check_records_nondecreasing_by_score(bad))
+
+    def test_inspect_keyed_missing_score_field_fails(self):
+        """corrupt keyed-search records: missing score field is rejected"""
+        from run_lab import check_records_have_score_and_name
+        bad = [{"name": "x"}]
+        self.assertFalse(check_records_have_score_and_name(bad))
+
+    def test_inspect_keyed_search_value_not_numeric_fails(self):
+        """corrupt keyed-search: non-numeric search value is rejected"""
+        from run_lab import check_search_value_is_numeric
+        self.assertFalse(check_search_value_is_numeric({"score": 0.5}))
+        self.assertFalse(check_search_value_is_numeric("0.5"))
+
+    def test_inspect_insort_records_unsorted_fails(self):
+        """corrupt insort records: unsorted list is rejected"""
+        from run_lab import check_records_nondecreasing_by_score
+        bad = [{"score": 0.9, "name": "x"}, {"score": 0.1, "name": "y"}]
+        self.assertFalse(check_records_nondecreasing_by_score(bad))
+
+    def test_insort_new_record_wrong_score_fails(self):
+        """corrupt insort new_record: wrong score is rejected"""
+        new_record = {"score": 0.9, "name": "new"}
+        new_score_is_05 = (new_record.get("score") == 0.5)
+        self.assertFalse(new_score_is_05)
+
+    def test_inspect_insort_equal_order_swapped_fails(self):
+        """corrupt insort existing order: r3 before r2 is rejected"""
+        names = ["r0", "r1", "r3", "r2", "r4"]
+        existing_equal_order_ok = (
+            "r2" in names and "r3" in names
+            and names.index("r2") < names.index("r3")
+        )
+        self.assertFalse(existing_equal_order_ok)
+
+    def test_inspect_key_uses_name_field_fails(self):
+        """corrupt key function: key that includes name field is rejected"""
+        from run_lab import check_key_ignores_name_field
+        bad_key = lambda r: (r["score"], r["name"])
+        self.assertFalse(check_key_ignores_name_field(bad_key))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

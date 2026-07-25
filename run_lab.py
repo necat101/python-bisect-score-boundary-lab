@@ -25,6 +25,33 @@ RECORDS_BASE = [
 RECORD_KEY = lambda record: record["score"]
 
 # ---------------------------------------------------------------------------
+# Inspect-input helpers (used by inspect_inputs rows AND by tests)
+# ---------------------------------------------------------------------------
+
+def check_scores_sorted_nondecreasing(scores):
+    return all(scores[i] <= scores[i + 1] for i in range(len(scores) - 1))
+
+def check_duplicate_block(scores, value):
+    count = scores.count(value)
+    return count >= 2
+
+def check_records_have_score_and_name(records):
+    return all(isinstance(r, dict) and "score" in r and "name" in r for r in records)
+
+def check_records_nondecreasing_by_score(records):
+    projected = [r["score"] for r in records]
+    return all(projected[i] <= projected[i + 1] for i in range(len(projected) - 1))
+
+def check_search_value_is_numeric(sv):
+    return isinstance(sv, (int, float)) and not isinstance(sv, bool)
+
+def check_key_ignores_name_field(key_fn):
+    """Verify key() produces equal results for records that differ only in name."""
+    a = {"score": 0.5, "name": "x"}
+    b = {"score": 0.5, "name": "y"}
+    return key_fn(a) == key_fn(b) == 0.5
+
+# ---------------------------------------------------------------------------
 # Case 1: score_threshold_left_marker
 # ---------------------------------------------------------------------------
 
@@ -34,13 +61,20 @@ def case_score_threshold_left_marker():
     # inspect_inputs
     scores = SCORES[:]
     search_value = THRESHOLD
+    sorted_ok = check_scores_sorted_nondecreasing(scores)
+    search_is_05 = (search_value == 0.5)
+    has_dup_block = check_duplicate_block(scores, search_value)
+    ok = sorted_ok and search_is_05 and has_dup_block
     rows.append({
         "case": "score_threshold_left_marker",
         "method": "inspect_inputs",
         "scores": scores,
         "search_value": search_value,
-        "ok": True,
-        "detail": f"scores={scores}, search={search_value}",
+        "sorted_ok": sorted_ok,
+        "search_is_05": search_is_05,
+        "has_dup_block": has_dup_block,
+        "ok": ok,
+        "detail": f"sorted_ok={sorted_ok}, search_is_05={search_is_05}, has_dup_block={has_dup_block}",
     })
 
     # execute_bisect
@@ -82,13 +116,20 @@ def case_score_threshold_right_marker():
     # inspect_inputs
     scores = SCORES[:]
     search_value = THRESHOLD
+    sorted_ok = check_scores_sorted_nondecreasing(scores)
+    search_is_05 = (search_value == 0.5)
+    has_dup_block = check_duplicate_block(scores, search_value)
+    ok = sorted_ok and search_is_05 and has_dup_block
     rows.append({
         "case": "score_threshold_right_marker",
         "method": "inspect_inputs",
         "scores": scores,
         "search_value": search_value,
-        "ok": True,
-        "detail": f"scores={scores}, search={search_value}",
+        "sorted_ok": sorted_ok,
+        "search_is_05": search_is_05,
+        "has_dup_block": has_dup_block,
+        "ok": ok,
+        "detail": f"sorted_ok={sorted_ok}, search_is_05={search_is_05}, has_dup_block={has_dup_block}",
     })
 
     # execute_bisect
@@ -131,14 +172,21 @@ def case_record_key_search_marker():
     search_value = 0.5  # numeric, not a record dict
 
     # inspect_inputs
+    records_nondecreasing = check_records_nondecreasing_by_score(records)
+    records_have_fields = check_records_have_score_and_name(records)
+    search_is_numeric = check_search_value_is_numeric(search_value)
+    ok = records_nondecreasing and records_have_fields and search_is_numeric
     rows.append({
         "case": "record_key_search_marker",
         "method": "inspect_inputs",
         "records": records,
         "search_value": search_value,
         "key": "lambda record: record[\"score\"]",
-        "ok": True,
-        "detail": f"records={[r['name'] + ':' + str(r['score']) for r in records]}, search={search_value}",
+        "records_nondecreasing": records_nondecreasing,
+        "records_have_fields": records_have_fields,
+        "search_is_numeric": search_is_numeric,
+        "ok": ok,
+        "detail": f"records_nondecreasing={records_nondecreasing}, records_have_fields={records_have_fields}, search_is_numeric={search_is_numeric}",
     })
 
     # Track whether key() is called on the numeric search_value.
@@ -208,14 +256,28 @@ def case_equal_score_insort_right_marker():
     new_record = {"score": 0.5, "name": "new"}
 
     # inspect_inputs
+    records_nondecreasing = check_records_nondecreasing_by_score(records)
+    new_score_is_05 = (new_record.get("score") == 0.5)
+    # Verify existing equal-score names are in expected order (r2 then r3)
+    names = [r.get("name") for r in records]
+    existing_equal_order_ok = (
+        "r2" in names and "r3" in names
+        and names.index("r2") < names.index("r3")
+    )
+    key_ignores_name = check_key_ignores_name_field(RECORD_KEY)
+    ok = records_nondecreasing and new_score_is_05 and existing_equal_order_ok and key_ignores_name
     rows.append({
         "case": "equal_score_insort_right_marker",
         "method": "inspect_inputs",
         "records_before": [r.copy() for r in records],
         "new_record": new_record.copy(),
         "key": "lambda record: record[\"score\"]",
-        "ok": True,
-        "detail": f"records={[r['name'] + ':' + str(r['score']) for r in records]}, new={new_record['name']}:{new_record['score']}",
+        "records_nondecreasing": records_nondecreasing,
+        "new_score_is_05": new_score_is_05,
+        "existing_equal_order_ok": existing_equal_order_ok,
+        "key_ignores_name": key_ignores_name,
+        "ok": ok,
+        "detail": f"records_nondecreasing={records_nondecreasing}, new_score_is_05={new_score_is_05}, existing_equal_order_ok={existing_equal_order_ok}, key_ignores_name={key_ignores_name}",
     })
 
     # execute_bisect (insort_right)
