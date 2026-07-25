@@ -1,0 +1,8 @@
+{"id": 25174048, "by": "kaunta", "type": "story", "title": "Using Python's Bisect Module", "url": "https://johnlekberg.com/blog/2020-11-21-stdlib-bisect.html"}
+{"id": 25175774, "by": "snicker7", "type": "comment", "parent": 25174048, "text": "The entire bisect module, consisting of 4 public functions, is literally only 32 lines of code."}
+{"id": 25175793, "by": "rahimnathwani", "type": "comment", "parent": 25175774, "text": "https://github.com/python/cpython/blob/master/Lib/bisect.py"}
+{"id": 25176313, "by": "alexchamberlain", "type": "comment", "parent": 25175774, "text": "Hate to be pedantic, as it is a thing of beauty, but most of it is replaced by a C implementation instead."}
+{"id": 25177161, "by": "zhd", "type": "comment", "parent": 25174048, "text": "Bisect is nice, but it's not the fastest option. If binning data, discretize it and then use a dict lookup - grades_to_letters[grade//10], for example. For insort, and indeed anything with sorted collections, just use the sortedcontainers module. Inserting an element is worst-case sublinear time, and also faster than C-extensions."}
+{"id": 25177576, "by": "dmurray", "type": "comment", "parent": 25174048, "text": "Is O(n + log n) really a thing or should he just write O(n)?"}
+{"id": 25177856, "by": "Spivak", "type": "comment", "parent": 25177576, "text": "Short answer is no because we're talking about asymptotic behavior and n dominates log n. Long answer is yes because O notation is commonly written this way to be more illustrative."}
+{"id": 25181846, "by": "kaunta", "type": "comment", "parent": 25177576, "text": "I should just write O(n). Thanks for catching the mistake, @dmurray. I'll fix that."}

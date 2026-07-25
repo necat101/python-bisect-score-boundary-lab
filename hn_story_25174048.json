@@ -1,0 +1,15 @@
+{
+  "by": "kaunta",
+  "descendants": 13,
+  "id": 25174048,
+  "kids": [
+    25175774,
+    25177161,
+    25177576
+  ],
+  "score": 29,
+  "time": 1606008006,
+  "title": "Using Python's Bisect Module",
+  "type": "story",
+  "url": "https://johnlekberg.com/blog/2020-11-21-stdlib-bisect.html"
+}
