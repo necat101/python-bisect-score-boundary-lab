@@ -12,8 +12,11 @@
       0.9
     ],
     "search_value": 0.5,
+    "sorted_ok": true,
+    "search_is_05": true,
+    "has_dup_block": true,
     "ok": true,
-    "detail": "scores=[0.1, 0.3, 0.5, 0.5, 0.5, 0.7, 0.9], search=0.5"
+    "detail": "sorted_ok=True, search_is_05=True, has_dup_block=True"
   },
   {
     "case": "score_threshold_left_marker",
@@ -45,8 +48,11 @@
       0.9
     ],
     "search_value": 0.5,
+    "sorted_ok": true,
+    "search_is_05": true,
+    "has_dup_block": true,
     "ok": true,
-    "detail": "scores=[0.1, 0.3, 0.5, 0.5, 0.5, 0.7, 0.9], search=0.5"
+    "detail": "sorted_ok=True, search_is_05=True, has_dup_block=True"
   },
   {
     "case": "score_threshold_right_marker",
@@ -92,8 +98,11 @@
     ],
     "search_value": 0.5,
     "key": "lambda record: record[\"score\"]",
+    "records_nondecreasing": true,
+    "records_have_fields": true,
+    "search_is_numeric": true,
     "ok": true,
-    "detail": "records=['r0:0.1', 'r1:0.3', 'r2:0.5', 'r3:0.5', 'r4:0.7'], search=0.5"
+    "detail": "records_nondecreasing=True, records_have_fields=True, search_is_numeric=True"
   },
   {
     "case": "record_key_search_marker",
@@ -151,8 +160,12 @@
       "name": "new"
     },
     "key": "lambda record: record[\"score\"]",
+    "records_nondecreasing": true,
+    "new_score_is_05": true,
+    "existing_equal_order_ok": true,
+    "key_ignores_name": true,
     "ok": true,
-    "detail": "records=['r0:0.1', 'r1:0.3', 'r2:0.5', 'r3:0.5', 'r4:0.7'], new=new:0.5"
+    "detail": "records_nondecreasing=True, new_score_is_05=True, existing_equal_order_ok=True, key_ignores_name=True"
   },
   {
     "case": "equal_score_insort_right_marker",
