@@ -1,0 +1,190 @@
+[
+  {
+    "case": "score_threshold_left_marker",
+    "method": "inspect_inputs",
+    "scores": [
+      0.1,
+      0.3,
+      0.5,
+      0.5,
+      0.5,
+      0.7,
+      0.9
+    ],
+    "search_value": 0.5,
+    "ok": true,
+    "detail": "scores=[0.1, 0.3, 0.5, 0.5, 0.5, 0.7, 0.9], search=0.5"
+  },
+  {
+    "case": "score_threshold_left_marker",
+    "method": "execute_bisect",
+    "index": 2,
+    "expected_index": 2,
+    "ok": true,
+    "detail": "bisect_left returned 2, expected 2"
+  },
+  {
+    "case": "score_threshold_left_marker",
+    "method": "verify_partition",
+    "index": 2,
+    "left_all_lt": true,
+    "right_all_ge": true,
+    "ok": true,
+    "detail": "left_all_lt=True, right_all_ge=True"
+  },
+  {
+    "case": "score_threshold_right_marker",
+    "method": "inspect_inputs",
+    "scores": [
+      0.1,
+      0.3,
+      0.5,
+      0.5,
+      0.5,
+      0.7,
+      0.9
+    ],
+    "search_value": 0.5,
+    "ok": true,
+    "detail": "scores=[0.1, 0.3, 0.5, 0.5, 0.5, 0.7, 0.9], search=0.5"
+  },
+  {
+    "case": "score_threshold_right_marker",
+    "method": "execute_bisect",
+    "index": 5,
+    "expected_index": 5,
+    "ok": true,
+    "detail": "bisect_right returned 5, expected 5"
+  },
+  {
+    "case": "score_threshold_right_marker",
+    "method": "verify_partition",
+    "index": 5,
+    "left_all_le": true,
+    "right_all_gt": true,
+    "ok": true,
+    "detail": "left_all_le=True, right_all_gt=True"
+  },
+  {
+    "case": "record_key_search_marker",
+    "method": "inspect_inputs",
+    "records": [
+      {
+        "score": 0.1,
+        "name": "r0"
+      },
+      {
+        "score": 0.3,
+        "name": "r1"
+      },
+      {
+        "score": 0.5,
+        "name": "r2"
+      },
+      {
+        "score": 0.5,
+        "name": "r3"
+      },
+      {
+        "score": 0.7,
+        "name": "r4"
+      }
+    ],
+    "search_value": 0.5,
+    "key": "lambda record: record[\"score\"]",
+    "ok": true,
+    "detail": "records=['r0:0.1', 'r1:0.3', 'r2:0.5', 'r3:0.5', 'r4:0.7'], search=0.5"
+  },
+  {
+    "case": "record_key_search_marker",
+    "method": "execute_bisect",
+    "index": 2,
+    "expected_index": 2,
+    "key_called_on_search_value": false,
+    "key_only_on_records": true,
+    "ok": true,
+    "detail": "bisect_left(records, 0.5, key=...) returned 2, expected 2; key_called_on_search_value=False"
+  },
+  {
+    "case": "record_key_search_marker",
+    "method": "verify_partition",
+    "index": 2,
+    "projected_scores": [
+      0.1,
+      0.3,
+      0.5,
+      0.5,
+      0.7
+    ],
+    "left_all_lt": true,
+    "right_all_ge": true,
+    "ok": true,
+    "detail": "left_all_lt=True, right_all_ge=True"
+  },
+  {
+    "case": "equal_score_insort_right_marker",
+    "method": "inspect_inputs",
+    "records_before": [
+      {
+        "score": 0.1,
+        "name": "r0"
+      },
+      {
+        "score": 0.3,
+        "name": "r1"
+      },
+      {
+        "score": 0.5,
+        "name": "r2"
+      },
+      {
+        "score": 0.5,
+        "name": "r3"
+      },
+      {
+        "score": 0.7,
+        "name": "r4"
+      }
+    ],
+    "new_record": {
+      "score": 0.5,
+      "name": "new"
+    },
+    "key": "lambda record: record[\"score\"]",
+    "ok": true,
+    "detail": "records=['r0:0.1', 'r1:0.3', 'r2:0.5', 'r3:0.5', 'r4:0.7'], new=new:0.5"
+  },
+  {
+    "case": "equal_score_insort_right_marker",
+    "method": "execute_bisect",
+    "insert_pos": 4,
+    "expected_pos": 4,
+    "existing_order_preserved": true,
+    "records_after_names": [
+      "r0",
+      "r1",
+      "r2",
+      "r3",
+      "new",
+      "r4"
+    ],
+    "ok": true,
+    "detail": "insort_right inserted at 4, expected 4; existing_order_preserved=True"
+  },
+  {
+    "case": "equal_score_insort_right_marker",
+    "method": "verify_partition",
+    "projected_scores": [
+      0.1,
+      0.3,
+      0.5,
+      0.5,
+      0.5,
+      0.7
+    ],
+    "nondecreasing": true,
+    "after_existing_equals": true,
+    "ok": true,
+    "detail": "nondecreasing=True, after_existing_equals=True"
+  }
+]
