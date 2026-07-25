@@ -78,6 +78,16 @@ See `observations.json` and `RESULTS.md` for full details.
 
 ## Run
 
+Linux / macOS:
+```bash
+./run.sh
+```
+Windows:
+```bat
+run.bat
+```
+
+Or manually:
 ```bash
 python3 run_lab.py
 python3 -m unittest test_lab -v
